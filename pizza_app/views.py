@@ -44,7 +44,29 @@ def customer_page(request):
         pizza_id = request.POST['pizza_id']
         pizza_quantity = request.POST['pizza_quantity']
 
-        order.create_line_item(pizza_id, order)
+        print(pizza_quantity)
+        print(pizza_quantity)
+        print(pizza_quantity)
+
+        line_item = order.create_line_item(pizza_id, order)
+
+        print(line_item)
+        print(line_item)
+        print(line_item)
+
+        if 'Pepperoni' in request.POST :
+            # Do something if pepperoni is POSTed (checked)
+            pepperoni = Topping.objects.get(pk=3)
+            line_item.toppings.add(pepperoni)
+
+        if 'Extra Cheese' in request.POST :
+            extra_cheese = Topping.objects.get(pk=1)
+            line_item.toppings.add(extra_cheese)
+
+        if 'Salat' in request.POST :
+            salat = Topping.objects.get(pk=2)
+            line_item.toppings.add(salat)
+
         context = {
             'toppings' : toppings,
             'pizzas': pizzas,

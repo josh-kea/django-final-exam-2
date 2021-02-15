@@ -60,18 +60,30 @@ class Pizza(models.Model):
 
 class Topping(models.Model):
      item = models.CharField(max_length=64, unique=True, blank=False)
+     quantity = models.IntegerField(default=1)
      price = models.IntegerField(default=0)
 
      def __str__(self):
         return f'{self.item}'
 
+
 class LineItem(models.Model):
     item = models.ForeignKey(Pizza, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(default=1)
     line_item_order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True, related_name='+')
+
+    toppings = models.ManyToManyField(Topping, blank=True, null=True)
     
     def __str__(self):
-        return f"{self.quantity}x {self.item.name}"
+        toppings = ""
+        for topping in self.toppings.all():
+            toppings = toppings + topping.item + ", "
+
+        if toppings == "":
+            return f"{self.quantity}x {self.item.name}"
+        else:
+            return f"{self.quantity}x {self.item.name} with {toppings}"
+        
 
 class Order(models.Model):
     status = (
@@ -110,21 +122,44 @@ class Order(models.Model):
     def create_line_item(self, pizza_id, order):
         pizza = Pizza.objects.get(pk=pizza_id)
         
-        line_item, created = LineItem.objects.get_or_create(item=pizza, line_item_order=order)
+        # line_item, created = LineItem.objects.get_or_create(item=pizza, line_item_order=order)
+
+        line_item = LineItem.objects.create(item=pizza, line_item_order=order)
         
-        if created:
-            self.final_line_items.add(line_item)
-        else:
-            line_item.quantity+=1
-            line_item.save()
-        
-        self.line_items_total_quantity = 0
+        self.final_line_items.add(line_item)
+
         self.total_price = 0
+        self.line_items_total_quantity = 0
 
         for final_line_item in self.final_line_items.all():
-            self.total_price+= final_line_item.item.price * final_line_item.quantity
+            self.total_price+= final_line_item.item.price
             self.line_items_total_quantity+= final_line_item.quantity
             self.save()
+
+        return line_item
+
+        # def create_line_item(self, pizza_id, order):
+        # pizza = Pizza.objects.get(pk=pizza_id)
+        
+        # # line_item, created = LineItem.objects.get_or_create(item=pizza, line_item_order=order)
+
+        # line_item, created = LineItem.objects.create(item=pizza, line_item_order=order)
+        
+        # if created:
+        #     self.final_line_items.add(line_item)
+        # else:
+        #     line_item.quantity+=1
+        #     line_item.save()
+        
+        # self.line_items_total_quantity = 0
+        # self.total_price = 0
+
+        # for final_line_item in self.final_line_items.all():
+        #     self.total_price+= final_line_item.item.price * final_line_item.quantity
+        #     self.line_items_total_quantity+= final_line_item.quantity
+        #     self.save()
+
+        # return line_item
 
     def clear_line_items(self):
         self.final_line_items.all().delete()
