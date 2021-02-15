@@ -19,9 +19,9 @@ urlpatterns = [
     path('place_order/', views.place_order, name='place_order'),
     path('clear_order/', views.clear_order, name='clear_order'),
     path('thank_you/<int:pk>/', views.thank_you, name='thank_you'),
-    path('api/v1/', PizzaList.as_view()),
+    path('api/v1/pizzas', PizzaList.as_view()),
 
-    path('api/v1/<int:pk>/', PizzaDetail.as_view()),
+    path('api/v1/pizzas/<int:pk>/', PizzaDetail.as_view()),
     path('edit_customers/', views.edit_customers, name='edit_customers'),
 
     path('admin/orders', views.orders_page, name='orders_page'),

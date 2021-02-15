@@ -10,7 +10,6 @@ class IsEmployeeOrNoAccess(permissions.BasePermission):
     def has_permission(self, request, view):
         print("USER TRYING TO ACCESS API!: "+ str(request.user))
         userprofile = UserProfile.objects.get(user=request.user)
-        print("USER TRYING TO ACCESS API!: "+ str(userprofile.user_status))
         
         if userprofile.isEmployee:
             print(str(request.user.username) + " has permission to view " + str(view))
