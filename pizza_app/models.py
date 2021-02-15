@@ -60,7 +60,6 @@ class Pizza(models.Model):
 
 class Topping(models.Model):
      item = models.CharField(max_length=64, unique=True, blank=False)
-     quantity = models.IntegerField(default=1)
      price = models.IntegerField(default=0)
 
      def __str__(self):
@@ -128,6 +127,13 @@ class Order(models.Model):
         
         self.final_line_items.add(line_item)
 
+        self.get_order_total()
+
+        return line_item
+
+    def get_order_total(self):
+        # self.final_line_items 
+
         self.total_price = 0
         self.line_items_total_quantity = 0
 
@@ -135,8 +141,11 @@ class Order(models.Model):
             self.total_price+= final_line_item.item.price
             self.line_items_total_quantity+= final_line_item.quantity
             self.save()
+            for topping in final_line_item.toppings.all():
+                self.total_price+= topping.price
+                self.save()
 
-        return line_item
+        return self
 
         # def create_line_item(self, pizza_id, order):
         # pizza = Pizza.objects.get(pk=pizza_id)

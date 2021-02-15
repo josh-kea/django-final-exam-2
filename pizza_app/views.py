@@ -44,48 +44,38 @@ def customer_page(request):
         pizza_id = request.POST['pizza_id']
         pizza_quantity = request.POST['pizza_quantity']
 
-        print(pizza_quantity)
-        print(pizza_quantity)
-        print(pizza_quantity)
-
         line_item = order.create_line_item(pizza_id, order)
 
-        print(line_item)
-        print(line_item)
-        print(line_item)
 
-        if 'Pepperoni' in request.POST :
-            # Do something if pepperoni is POSTed (checked)
-            pepperoni = Topping.objects.get(pk=3)
-            line_item.toppings.add(pepperoni)
+        for topping in Topping.objects.all():
+            if topping.item in request.POST:
+                
+                line_item.toppings.add(topping)
+                print(f"Added {topping.item} to line item")
 
-        if 'Extra Cheese' in request.POST :
-            extra_cheese = Topping.objects.get(pk=1)
-            line_item.toppings.add(extra_cheese)
+        order.get_order_total()
 
-        if 'Salat' in request.POST :
-            salat = Topping.objects.get(pk=2)
-            line_item.toppings.add(salat)
+        # if 'Pepperoni' in request.POST :
+        #     # Do something if pepperoni is POSTed (checked)
+        #     pepperoni = Topping.objects.get(pk=3)
+        #     line_item.toppings.add(pepperoni)
 
-        context = {
-            'toppings' : toppings,
-            'pizzas': pizzas,
-            'user_profile': user_profile,
-            'order': order
-        }  
-        render(request, 'pizza_app/customer_page.html', context)               
+        # if 'Extra Cheese' in request.POST :
+        #     extra_cheese = Topping.objects.get(pk=1)
+        #     line_item.toppings.add(extra_cheese)
+
+        # if 'Salat' in request.POST :
+        #     salat = Topping.objects.get(pk=2)
+        #     line_item.toppings.add(salat)
+
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])              
     
     if request.method == 'POST' and 'clearBtn' in request.POST:
         order_id = request.POST['order_id']
 
         order.clear_line_items()
-        context = {
-            'toppings' : toppings,
-            'pizzas': pizzas,
-            'user_profile': user_profile,
-            'order': order
-        }  
-        render(request, 'pizza_app/customer_page.html', context)               
+
+        return HttpResponseRedirect(request.META['HTTP_REFERER'])             
 
     if request.method == 'POST' and 'placeBtn' in request.POST:
         order_id = request.POST['order_id']
