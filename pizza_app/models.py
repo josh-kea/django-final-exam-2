@@ -118,12 +118,15 @@ class Order(models.Model):
 
         return self
 
-    def create_line_item(self, pizza_id, order):
+    def create_line_item(self, pizza_id, order, quantity):
         pizza = Pizza.objects.get(pk=pizza_id)
         
         # line_item, created = LineItem.objects.get_or_create(item=pizza, line_item_order=order)
 
         line_item = LineItem.objects.create(item=pizza, line_item_order=order)
+
+        line_item.quantity = quantity
+        line_item.save()
         
         self.final_line_items.add(line_item)
 
@@ -138,11 +141,11 @@ class Order(models.Model):
         self.line_items_total_quantity = 0
 
         for final_line_item in self.final_line_items.all():
-            self.total_price+= final_line_item.item.price
+            self.total_price+= final_line_item.item.price * final_line_item.quantity
             self.line_items_total_quantity+= final_line_item.quantity
             self.save()
             for topping in final_line_item.toppings.all():
-                self.total_price+= topping.price
+                self.total_price+= topping.price * final_line_item.quantity
                 self.save()
 
         return self

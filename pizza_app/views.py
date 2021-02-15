@@ -44,7 +44,7 @@ def customer_page(request):
         pizza_id = request.POST['pizza_id']
         pizza_quantity = request.POST['pizza_quantity']
 
-        line_item = order.create_line_item(pizza_id, order)
+        line_item = order.create_line_item(pizza_id, order, pizza_quantity)
 
 
         for topping in Topping.objects.all():
