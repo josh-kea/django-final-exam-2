@@ -1,0 +1,62 @@
+{% extends 'pizza_app/base.html' %}
+
+{% block title %}Edit pizza{% endblock %}
+
+{% block content %}
+
+<section class="employe_page">
+
+  {% load static %}
+
+
+  <p class="greeting-text">Hello <b>{{ user.username }}</b></p>
+  <a class="profile-details-btn" style="color:black;" href="{% url 'pizza_app:user_profile' %}"
+    style="color:white !important">View Profile Details</a>
+
+
+
+  <!-- CREATE NEW PIZZA -->
+
+  <div class="new_pizza_container">
+    <h1>Add new Pizza</h1>
+    <form action="." method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <br>
+      <input type="submit" value="Upload" />
+    </form>
+  </div>
+  <div class="white_line"></div>
+  <br>
+
+  <div class="pizzas-wrapper">
+    {% for pizza in pizzas %}
+    <div class="pizza-block">
+      <div class="pizza-content2">
+        <div>
+          <h2 class="pizza-name">{{ pizza.name }}</h2>
+          <p>{{ pizza.price }} kr.</p>
+          <p class="pizza-text">{{ pizza.text }}</p>
+          <a class="edit-pizza-btn" href="{% url 'pizza_app:edit_pizza' pizza.pk %}">Edit pizza</a>
+        </div>
+
+        <div class="pizza-img">
+          <img src="{{ pizza.cover.url }}" alt="{{ pizza.name }}">
+        </div>
+      </div>
+    </div>
+
+    {% endfor %}
+  </div>
+</section>
+<style>
+  .pizzas-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 40px;
+  }
+</style>
+
+{% endblock %}

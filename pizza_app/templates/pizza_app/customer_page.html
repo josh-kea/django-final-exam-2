@@ -1,0 +1,214 @@
+{% extends 'pizza_app/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<section class="user_page">
+    {% csrf_token %}
+    <div class="menu_container">
+        {% load static %}
+
+        <p class="greeting-text">Hello <b>{{ user.username }}</b> ({{ user_profile.user_status }})</p>
+        <a class="profile-details-btn" style="color:black;" href="{% url 'pizza_app:user_profile' %}"
+            style="color:white !important">View Profile Details</a>
+
+        <form action="">
+
+        </form>
+        <div class="hero-wrapper">
+            <div>
+                <h1 class="hero-header">Traditional fresh pizza since 2020.</h1>
+            </div>
+            <div style="width:100%;">
+                <img class="hero-img" src="{% static 'pizza_app/img/ingredients.png' %}" alt="">
+            </div>
+        </div>
+        <div class="pizzas-bg">
+            <div class="pizzas-wrapper">
+                
+                   
+                    {% for pizza in pizzas %}
+                    <form method="POST">
+                        {% csrf_token %}
+                    <div class="pizza-block">
+                        <input type="hidden" name="pizza_id" value="{{ pizza.pk }}" />
+                        <input type="hidden" name="pizza_price" value="{{pizza.price}}" />
+                        <input type="hidden" name="pizza_name" value="{{pizza.name}}" />
+
+                        <div class="pizza-content">
+                            <div>
+                                <h2 class="pizza-name">{{ pizza.name }}</h2>
+                                <p>{{ pizza.price }} kr.</p>
+                                <p class="pizza-text">{{ pizza.text }}</p>
+
+                            </div>
+                            <div class="pizza-img">
+                                <img src="{{ pizza.cover.url }}" alt="{{ pizza.name }}">
+                            </div>
+                        </div>
+                        
+                        <label for="topping-choice">Additional toppings</label>
+                        <div style="display:flex; justify-content:space-between;">
+                            {% for topping in toppings %}
+                            <label style="font-size:12px;">
+                                <input type="checkbox" id="{{ topping.pk }}" name="{{ topping.pk }}" value="unchecked" onchange="changeValue(this)">
+                                {{ topping.item }} - {{ topping.price }} kr.
+    
+                            </label>
+                            {% endfor %}
+                            <script>
+                                function changeValue(e) {
+                                    if(e.value === "checked") {
+                                        e.value = "unchecked"
+                                        console.log(e.value)
+                                    } else if (e.value === "unchecked"){
+                                        e.value = "checked"
+                                        console.log(e.value)
+                                    }
+                                }
+                            </script>
+                        </div>
+                        <div>Quantity:</div> 
+                        <div class="quantity-container" style="display:flex; align-items:center;">
+                            <input type="number" id="quantity" name="pizza_quantity" min="1" value="1"> 
+                        </div>
+
+                        <style>
+
+                            input[type=number]::-webkit-inner-spin-button {
+                                opacity: 1; /* shows Spin Buttons per default (Chrome >= 39) */
+                            }
+
+                            #quantity {
+                                width:40px;
+                            }
+                        </style>
+
+                        <button style="margin-top:20px; padding:10px 30px" name="addBtn">Add To Order</button>
+                    </div>
+                       
+                    </form>
+                    {% endfor %}
+
+                    <div> <b>Cart Total:</b> {{ order.line_items_total_quantity }} <b>Subtotal:</b> {{ order.total_price}} kr. </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button class="button" name="clearBtn">Clear Cart</button>
+                        <input type="hidden" name="order_id" value="{{order.pk}}">
+                    </form>
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="button" name="placeBtn">Place Order</button>
+                    <input type="hidden" name="order_id" value="{{order.pk}}">
+                </form>
+
+            </div>
+        </div>
+        <a href="{% url 'login_app:logout' %}">Logout</a>
+    </div>
+
+    <div class="img_container">
+
+    </div>
+</section>
+
+<style>
+    .profile-details-btn {
+        text-align: center;
+        margin: 0 auto;
+        display: block;
+        font-size: 10px;
+    }
+
+    .greeting-text {
+        text-align: center;
+    }
+
+    .pizzas-bg {
+        background-color: #FFFBF6;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    p {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .pizzas-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 40px;
+    }
+
+    .hero-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .hero-img {
+        width: 70%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .hero-header {
+        font-size: 86px;
+        line-height: 90px;
+        font-family: 'Cardo', serif;
+        font-weight: 400;
+    }
+
+    .pizza-name {
+        font-family: 'Cardo', serif;
+        margin-bottom: 1rem;
+        font-weight: 400 !important;
+    }
+
+    .pizza-text {
+        color: #746b60;
+        line-height: 1.5em;
+        height: 3em;
+        overflow: hidden;
+
+        text-overflow: ellipsis !important;
+
+    }
+
+    .pizza-content {
+        display: grid;
+        grid-template-columns: 1fr 0.5fr;
+    }
+
+    .pizza-img {
+        width: 100%;
+    }
+
+    .pizza-img img {
+        width: 60%;
+        display: block;
+        margin-left: auto;
+
+    }
+
+    .user_page {
+        background-color: #FAF3EC;
+
+    }
+
+    .pizza-block {
+
+        padding: 20px;
+        border-bottom: 1px solid #746b605e;
+    }
+
+
+    .pizza-block:hover .pizza-name {
+        text-decoration: underline;
+    }
+</style>
+
+{% endblock %}
