@@ -11,7 +11,14 @@
   <div style="padding:20px; font-size:24px; font-weight:500; border-bottom:0.1rem solid silver;">Order Summary</div>
 {% for line_item in order.final_line_items.all %}
 
-  <div style="padding:20px;">{{line_item}}</div>
+  <div style="padding:20px;">
+    <p>{{line_item.quantity}} x {{line_item.item}}</p>
+
+    {% for topping in line_item.toppings.all %}
+      <p style="font-size:10px; padding: 0 20% 0 40%; text-align:left; display:block;">- Extra {{ topping }}</p>
+    {% endfor %}
+
+  </div>
 
 {% endfor %}
 </div>
