@@ -70,8 +70,7 @@ class LineItem(models.Model):
     item = models.ForeignKey(Pizza, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField(default=1)
     line_item_order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True, related_name='+')
-
-    toppings = models.ManyToManyField(Topping, blank=True, null=True)
+    toppings = models.ManyToManyField(Topping, blank=True)
     
     def __str__(self):
         toppings = ""
@@ -86,15 +85,15 @@ class LineItem(models.Model):
 
 class Order(models.Model):
     status = (
-        ('pending', 'pending'),
-        ('delivering', 'delivering'),
-        ('delivered', 'delivered'),
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Delivered', 'Delivered'),
     )
 
     customer = models.ForeignKey(User, on_delete=models.CASCADE)
     order_date_time = models.DateTimeField(auto_now_add=True)
     order_status = models.CharField(
-        choices=status, default='pending', max_length=250)
+        choices=status, default='Pending', max_length=250)
     final_line_items = models.ManyToManyField(LineItem, blank=True)
     total_price = models.IntegerField(default=0)
     line_items_total_quantity = models.IntegerField(default=0)

@@ -14,3 +14,5 @@ class IsEmployeeOrNoAccess(permissions.BasePermission):
         if userprofile.isEmployee:
             print(str(request.user.username) + " has permission to view " + str(view))
             return True
+    
+    
